@@ -1,21 +1,25 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-"""ORF FINDER"""
+"""ORF FINDER. This programm takes in fasta-file, executes ORF-search and writes all ORFs, that have been found into CSV-file"""
 
 """ORF (open reading frame) ist ein DNA Abschnitt zwischen Start- und Stoppcodon. ORF-Finder gibt alle möglichen ORFs heraus. 
 Bei der prokariotischen DNA-Sequenz sind insgesamt 6 ORFs möglich. Jedoch wird nur eine von der 6 möglichen Reading Frames ein ORF.
 Normalerweise ist die längste reading Frame ein ORF."""
 
 import re
+import Bio
 from Bio import SeqIO
 import csv
 
-# Als erstes muss FASTA File geparst werden.
+"""DATA PREPARATION"""
 
-name = "/home/maria/.local/share/applications/gencode.v41.pc_transcripts.fa"
-sequences = SeqIO.parse(name,"fasta") # diese funktion gibt ein iterierbares Objekt wieder
+# Als erstes muss FASTA File geparst werden: "/home/maria/.local/share/applications/gencode.v41.pc_transcripts.fa"
+name = input("path to FASTA-file: ")
+sequences = SeqIO.parse(name,"fasta") # iterierbares Objekt
+print("your FASTA-file: ",sequences)
 
+# Looping through all records in FASTA-file
 for record in sequences:
     transcript_1 = record
     break
@@ -24,31 +28,24 @@ print(transcript_1) # die Attributen von diesem bestimmten Objekt werden wiederg
 
 # Diese seq enthält UTRs. Man braucht nur CDS.
 CDS = transcript_1.seq[60:1041]
-print(CDS) # es beginnt mit ATG end endet mit TAG.
+print("CDS: ", CDS, type(CDS)) # es beginnt mit ATG end endet mit TAG.
 
-print(type(CDS))
 # type of the CDS object ist Class. We need is as a string. Before that we create a list with all records separted by ">"-sign.
-
 L = []
 for record in sequences:
     L.append(record)
-
-len(L)
-type(L)
-L[0]
+print("length: ",len(L), "type: ",type(L), "1st SeqRecord (list element): ",L[0], "type of SeqRecord:", type(L[0]))
 # nun werden die SeqRecord Objects durch Indexing vom List wiedergegeeben.
 
-type(L[0])
-# Typ vom List Object an der Position 0 ist SeqRecord Object.
-L[0].seq
+# Typ vom List Object an der Position 0 ist SeqRecord Object. Nun kann die Sequenz durch Methods abgerufen werden.
+print("string:",L[0].seq, type(L[0].seq))
 
-# nun kann die Sequenz durch Methods abgerufen werden.
-type(L[0].seq)
-
-# typ von L[0].seq ist Bio.Seq.Seq.
 seq_as_string= str(L[0].seq)
 my_seq = seq_as_string
 
+"""FIND ORFs"""
+
+#defining a function which
 def find_ORFs(my_seq):
     ORFs = []
     if "ATG" in my_seq:
